@@ -75,6 +75,6 @@ Após o treinamento, o modelo apresentou os seguintes resultados no conjunto de 
 `pip install tensorflow opencv-python matplotlib lime scikit-image`
 4.  Faça o download ou importe o dataset "[Crystal Clean: Brain Tumors MRI Dataset](https://www.kaggle.com/datasets/mohammadhossein77/brain-tumors-dataset)" do Kaggle.
 5.  Organize o dataset no formato padrão (pastas por classe).
-6.  Execute o notebook de treinamento para gerar o arquivo `.keras`.
-7.  Para gerar as explicações, utilize os scripts de XAI fornecidos, que carregarão o modelo salvo e aplicarão a segmentação automática nas imagens de teste antes de gerar os mapas de calor (Grad-CAM++) ou superpixels (LIME).
+6.  Execute o notebook (`TLSeg_128_6.ipynb`) de treinamento para gerar o arquivo `.keras`.
+7.  Para gerar as explicações, utilize os scripts de XAI fornecidos (`GC_LIME.ipynb`), que carregarão o modelo salvo e aplicarão a segmentação automática nas imagens de teste antes de gerar os mapas de calor (Grad-CAM++) ou superpixels (LIME).
 8.  O melhor modelo treinado será salvo no caminho configurado para posteriores inferências ou análises.
