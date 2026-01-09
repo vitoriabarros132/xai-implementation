@@ -62,10 +62,11 @@ Abaixo, a matriz de confusão do modelo treinado, demonstrando o desempenho por 
 
 Após o treinamento, o modelo apresentou os seguintes resultados no conjunto de teste:
 
-*   **Loss no teste:** 0.xxxx
-*   **Acurácia no teste:** 0.xxxx (xx.xx%)
-*   **Precisão no teste:** 0.xxxx (xx.xx%)
-*   **Recall no teste:** 0.xxxx (xx.xx%)
+*   **Loss no teste:** 0.1755
+*   **Acurácia no teste:** 0.9654 (96.54%)
+*   **Precisão no teste:** 0.9671 (96.71%)
+*   **Recall no teste:** 0.9626 (96.26%)
+*   **F1-score no teste:** 0.9653 (96.53%)
 
 ## Como Usar
 
