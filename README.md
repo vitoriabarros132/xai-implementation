@@ -44,6 +44,11 @@ Para garantir a transparência do modelo "caixa-preta", foram implementadas duas
     *   Configurado para exibir áreas de confirmação (que apoiam a decisão) e áreas de contradição.
     *   Integração robusta com a etapa de segmentação para evitar que o algoritmo considere o fundo preto como característica relevante.
 
+3. SHAP (SHapley Additive exPlanations):
+   * Utiliza a teoria dos jogos para atribuir a contribuição de cada pixel (ou bloco de pixels) para a probabilidade final de cada classe.
+   * Auditoria de Viés: Foi fundamental para identificar o "Shortcut Learning", revelando que o modelo inicialmente focava no osso do crânio. 
+   * Validação de Segmentação: Após a implementação do *Skull Stripping* via OpenCV (Contornos + Erosão), o SHAP confirmou que o modelo passou a focar exclusivamente na massa tumoral e tecidos adjacentes.
+
 ## Treinamento
 1. O conjunto de dados passou pelo pipeline de segmentação antes de entrar na rede.
 2. O modelo utilizou pesos pré-treinados (ImageNet) como ponto de partida (Fine-tuning).
@@ -76,5 +81,5 @@ Após o treinamento, o modelo apresentou os seguintes resultados no conjunto de 
 4.  Faça o download ou importe o dataset "[Crystal Clean: Brain Tumors MRI Dataset](https://www.kaggle.com/datasets/mohammadhossein77/brain-tumors-dataset)" do Kaggle.
 5.  Organize o dataset no formato padrão (pastas por classe).
 6.  Execute o notebook (`TLSeg_128_6.ipynb`) de treinamento para gerar o arquivo `.keras`.
-7.  Para gerar as explicações, utilize os scripts de XAI fornecidos (`GC_LIME.ipynb`), que carregarão o modelo salvo e aplicarão a segmentação automática nas imagens de teste antes de gerar os mapas de calor (Grad-CAM++) ou superpixels (LIME).
+7.  Para gerar as explicações, utilize os scripts de XAI fornecidos (`gc_lime_shap.py`), que carregarão o modelo salvo e aplicarão a segmentação automática nas imagens de teste antes de gerar os mapas de calor (Grad-CAM++), superpixels (LIME) e atribuição de valores de importância por pixels (SHAP).
 8.  O melhor modelo treinado será salvo no caminho configurado para posteriores inferências ou análises.
