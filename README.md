@@ -1,4 +1,92 @@
-# Classificação de tumores cerebrais usando EfficientNet e XAI
+# |ENG| Brain Tumor Classification using EfficientNet and XAI
+
+This repository contains the code for an image classification model based on Transfer Learning (using the EfficientNet architecture) designed to classify brain Magnetic Resonance Imaging (MRI) scans. The project has a central focus on Explainable AI (XAI), implementing advanced techniques to visually explain the model's decisions and validate its clinical reliability.
+
+## Dataset
+
+The model was trained and evaluated using the "[Crystal Clean: Brain Tumors MRI Dataset](https://www.kaggle.com/datasets/mohammadhossein77/brain-tumors-dataset)" available on Kaggle. This dataset contains brain MRI images categorized into 4 classes:
+
+* No tumor
+* Glioma 
+* Meningioma
+* Pituitary
+
+The original dataset was split into training, validation, and test sets using the scikit-learn library, ensuring class stratification.
+
+## Architecture and Pre-processing
+
+The model's pipeline stands out for using robust segmentation prior to classification:
+
+1. Pre-processing (Segmentation): Implementation of Otsu's Thresholding algorithm (via OpenCV) to remove the background and skull, isolating the brain's region of interest (ROI). This ensures the model learns only from brain tissues, avoiding biases caused by background noise.
+2. Backbone (Transfer Learning): Use of the EfficientNetB0 network pre-trained on ImageNet as a feature extractor.
+3. Top Layers:
+    * Global Average Pooling for dimensionality reduction.
+    * Batch Normalization to stabilize training.
+    * Dropout for regularization and overfitting prevention.
+    * Dense output layer with Softmax activation (4 classes).
+
+The model compilation uses the `categorical_crossentropy` loss function and the Adam optimizer.
+
+Network configuration:
+
+![Network configuration](images/configuracao.png)
+
+## Explainable AI (XAI)
+
+To ensure the transparency of the "black-box" model, two explainability techniques were implemented, both adjusted to respect the training segmentation:
+
+1.  Grad-CAM++ (Gradient-weighted Class Activation Mapping ++):
+    * Visualization of heatmaps based on the 1st, 2nd, and 3rd order gradients of the last convolutional layer.
+    * Allows for precisely identifying the spatial region that most activated the neurons for the predicted class.
+  
+2.  LIME (Local Interpretable Model-agnostic Explanations):
+    * Generation of local explanations through image perturbations and superpixel segmentation.
+    * Configured to display areas of confirmation (that support the decision) and areas of contradiction.
+    * Robust integration with the segmentation step to prevent the algorithm from considering the black background as a relevant feature.
+
+3. SHAP (SHapley Additive exPlanations):
+   * Uses game theory to attribute the contribution of each pixel (or block of pixels) to the final probability of each class.
+   * Bias Audit: It was fundamental to identify "Shortcut Learning", revealing that the model initially focused on the skull bone. 
+   * Segmentation Validation: After implementing *Skull Stripping* via OpenCV (Contours + Erosion), SHAP confirmed that the model started to focus exclusively on the tumor mass and adjacent tissues.
+
+## Training
+1. The dataset went through the segmentation pipeline before entering the network.
+2. The model used pre-trained weights (ImageNet) as a starting point (Fine-tuning).
+3. The training used callbacks such as Early Stopping (monitoring validation loss) and ReduceLROnPlateau for dynamic learning rate adjustment.
+4. The best model (based on val_loss) was automatically saved through ModelCheckpoint.
+
+## Results
+
+The chart below shows the evolution of accuracy and loss during the training and validation epochs:
+
+![Chart](images/grafico.png)
+
+Below is the trained model's confusion matrix, demonstrating the performance per class:
+
+![Confusion matrix](images/matriz.png)
+
+After training, the model showed the following results on the test set:
+
+* **Test Loss:** 0.1755
+* **Test Accuracy:** 0.9654 (96.54%)
+* **Test Precision:** 0.9671 (96.71%)
+* **Test Recall:** 0.9626 (96.26%)
+* **Test F1-score:** 0.9653 (96.53%)
+
+## How to Use
+
+1.  Clone this repository.
+2.  Install the necessary dependencies:
+`pip install tensorflow opencv-python matplotlib lime scikit-image`
+4.  Download or import the "[Crystal Clean: Brain Tumors MRI Dataset](https://www.kaggle.com/datasets/mohammadhossein77/brain-tumors-dataset)" dataset from Kaggle.
+5.  Organize the dataset in the standard format (folders by class).
+6.  Run the training notebook (`TLSeg_128_6.ipynb`) to generate the `.keras` file.
+7.  To generate the explanations, use the provided XAI scripts (`gc_lime_shap.py`), which will load the saved model and apply automatic segmentation to the test images before generating the heatmaps (Grad-CAM++), superpixels (LIME), and importance value attribution by pixels (SHAP).
+8.  The best trained model will be saved in the configured path for further inferences or analysis.
+
+
+--------------------------------------
+# |PT/BR| Classificação de tumores cerebrais usando EfficientNet e XAI
 
 Este repositório contém o código para um modelo de classificação de imagens baseado em Transfer Learning (utilizando a arquitetura EfficientNet) projetado para classificar imagens de ressonância magnética (RM) de cérebros. O projeto tem um foco central em Explainable AI (XAI), implementando técnicas avançadas para explicar visualmente as decisões do modelo e validar sua confiabilidade clínica.
 
