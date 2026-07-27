@@ -92,8 +92,8 @@ After training, the model showed the following results on the test set:
 5.  Organize the dataset in the standard format (folders by class).
 6.  Run the training notebook (`TLSeg_128_6.ipynb`) to generate the `.keras` file.
 7.  Generating Explanations:
-   * Unified Quantitative & Qualitative Pipeline: Run XAI_QUANTITATIVA.ipynb (or .py) to calculate Gini Index and AOPC scores alongside generating visualizations for Grad-CAM++, LIME, and SHAP in batch mode.
-   * Individual Scripts: Alternatively, individual qualitative routines can still be accessed via gc_shap_lime.py (or individual gradcam, lime, shap scripts).
+   * Unified Quantitative & Qualitative Pipeline: Run `XAI_QUANTITATIVA.ipynb` to calculate Gini Index and AOPC scores alongside generating visualizations for Grad-CAM++, LIME, and SHAP in batch mode.
+   * Individual Scripts: Alternatively, individual qualitative routines can still be accessed via `gc_shap_lime.py` (or individual gradcam, lime, shap scripts).
 
 
 --------------------------------------
@@ -190,5 +190,5 @@ Após o treinamento, o modelo apresentou os seguintes resultados no conjunto de 
 7.  O melhor modelo treinado será salvo no caminho configurado para posteriores inferências ou análises.
 8.  The best trained model will be saved in the configured path for further inferences or analysis.
 9.  Geração de Explicações:
-   * Pipeline Quantitativo e Qualitativo Unificado: Execute o notebook/script XAI_QUANTITATIVA (.ipynb ou .py) para calcular automaticamente o Índice Gini e o AOPC enquanto gera as imagens explicativas em lote para Grad-CAM++, LIME e SHAP.
-   * Scripts Individuais: Alternativamente, os scripts qualitativos individuais ou consolidados anteriores ainda podem ser acessados via gc_shap_lime.py (ou scripts isolados de cada método).
+   * Pipeline Quantitativo e Qualitativo Unificado: Execute o notebook/script `XAI_QUANTITATIVA.ipynb` para calcular automaticamente o Índice Gini e o AOPC enquanto gera as imagens explicativas em lote para Grad-CAM++, LIME e SHAP.
+   * Scripts Individuais: Alternativamente, os scripts qualitativos individuais ou consolidados anteriores ainda podem ser acessados via `gc_shap_lime.py` (ou scripts isolados de cada método).
