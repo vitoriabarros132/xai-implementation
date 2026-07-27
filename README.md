@@ -1,6 +1,6 @@
 # |ENG| Brain Tumor Classification using EfficientNet and XAI
 
-This repository contains the code for an image classification model based on Transfer Learning (using the EfficientNet architecture) designed to classify brain Magnetic Resonance Imaging (MRI) scans. The project has a central focus on Explainable AI (XAI), implementing advanced techniques to visually explain the model's decisions and validate its clinical reliability.
+This repository contains the code for an image classification model based on Transfer Learning (using the EfficientNet architecture) designed to classify brain Magnetic Resonance Imaging (MRI) scans. The project has a central focus on Explainable AI (XAI), implementing advanced qualitative and quantitative techniques to visually explain the model's decisions and validate its clinical reliability.
 
 ## Dataset
 
@@ -31,23 +31,33 @@ Network configuration:
 
 ![Network configuration](images/configuracao.png)
 
-## Explainable AI (XAI)
+## Explainable AI (XAI) & Quantitative Evaluation
 
-To ensure the transparency of the "black-box" model, two explainability techniques were implemented, both adjusted to respect the training segmentation:
+To ensure the transparency of the "black-box" model, three explainability techniques were implemented, both qualitatively and quantitatively:
 
-1.  Grad-CAM++ (Gradient-weighted Class Activation Mapping ++):
-    * Visualization of heatmaps based on the 1st, 2nd, and 3rd order gradients of the last convolutional layer.
+### Qualitative Explainers
+
+1. **Grad-CAM++ (Gradient-weighted Class Activation Mapping ++):**
+    * Visualization of heatmaps based on the 1st, 2nd, and 3rd order gradients of the last convolutional layer (`top_activation`).
     * Allows for precisely identifying the spatial region that most activated the neurons for the predicted class.
   
-2.  LIME (Local Interpretable Model-agnostic Explanations):
+2. **LIME (Local Interpretable Model-agnostic Explanations):**
     * Generation of local explanations through image perturbations and superpixel segmentation.
-    * Configured to display areas of confirmation (that support the decision) and areas of contradiction.
+    * Configured with multiple visualization options: side-by-side comparison, confirmation/contradiction areas, and black-background isolation.
     * Robust integration with the segmentation step to prevent the algorithm from considering the black background as a relevant feature.
 
-3. SHAP (SHapley Additive exPlanations):
-   * Uses game theory to attribute the contribution of each pixel (or block of pixels) to the final probability of each class.
-   * Bias Audit: It was fundamental to identify "Shortcut Learning", revealing that the model initially focused on the skull bone. 
-   * Segmentation Validation: After implementing *Skull Stripping* via OpenCV (Contours + Erosion), SHAP confirmed that the model started to focus exclusively on the tumor mass and adjacent tissues.
+3. **SHAP (SHapley Additive exPlanations):**
+    * Uses game theory (Partition/Black-box Explainer) to attribute the contribution of each pixel to the final probability.
+    * **Bias Audit:** Fundamental to identify "Shortcut Learning", revealing initial reliance on skull bone features.
+    * **Segmentation Validation:** Confirmed that *Skull Stripping* redirected model focus strictly to the tumor mass and adjacent tissues.
+
+### Quantitative XAI Metrics
+
+To mathematically evaluate and compare the quality of the generated explanations, the following metrics were computed for all XAI methods across sample batches:
+
+* **Gini Index (Sparsity / Concentration):** Measures how concentrated the explanation heatmaps are. Higher values indicate that the model relies on a compact, highly focused set of pixels rather than diffuse noise.
+* **AOPC (Area Over the Perturbation Curve / Faithfulness):** Quantifies how faithful the explanation is to the model's decision process by systematically masking top-ranked pixels (in $k$ steps) and measuring the drop in prediction probability.
+
 
 ## Training
 1. The dataset went through the segmentation pipeline before entering the network.
@@ -81,14 +91,15 @@ After training, the model showed the following results on the test set:
 4.  Download or import the "[Crystal Clean: Brain Tumors MRI Dataset](https://www.kaggle.com/datasets/mohammadhossein77/brain-tumors-dataset)" dataset from Kaggle.
 5.  Organize the dataset in the standard format (folders by class).
 6.  Run the training notebook (`TLSeg_128_6.ipynb`) to generate the `.keras` file.
-7.  To generate the explanations, use the provided XAI scripts (`gc_lime_shap.py`), which will load the saved model and apply automatic segmentation to the test images before generating the heatmaps (Grad-CAM++), superpixels (LIME), and importance value attribution by pixels (SHAP).
-8.  The best trained model will be saved in the configured path for further inferences or analysis.
+7.  Generating Explanations:
+   * Unified Quantitative & Qualitative Pipeline: Run XAI_QUANTITATIVA.ipynb (or .py) to calculate Gini Index and AOPC scores alongside generating visualizations for Grad-CAM++, LIME, and SHAP in batch mode.
+   * Individual Scripts: Alternatively, individual qualitative routines can still be accessed via gc_shap_lime.py (or individual gradcam, lime, shap scripts).
 
 
 --------------------------------------
 # |PT/BR| Classificação de tumores cerebrais usando EfficientNet e XAI
 
-Este repositório contém o código para um modelo de classificação de imagens baseado em Transfer Learning (utilizando a arquitetura EfficientNet) projetado para classificar imagens de ressonância magnética (RM) de cérebros. O projeto tem um foco central em Explainable AI (XAI), implementando técnicas avançadas para explicar visualmente as decisões do modelo e validar sua confiabilidade clínica.
+Este repositório contém o código para um modelo de classificação de imagens baseado em Transfer Learning (utilizando a arquitetura EfficientNet) projetado para classificar imagens de ressonância magnética (RM) de cérebros. O projeto tem um foco central em Explainable AI (XAI), implementando técnicas avançadas qualitativas e quantitativas para explicar visualmente as decisões do modelo e validar sua confiabilidade clínica.
 
 ## Dataset
 
@@ -119,9 +130,9 @@ Configuração da rede:
 
 ![Configuração da rede](images/configuracao.png)
 
-## Explainable AI (XAI)
+## Explainable AI (XAI) & Avaliação Quantitativa
 
-Para garantir a transparência do modelo "caixa-preta", foram implementadas duas técnicas de explicabilidade, ambas ajustadas para respeitar a segmentação do treinamento:
+Para garantir a transparência do modelo "caixa-preta", foram implementadas três técnicas de explicabilidade, avaliadas tanto qualitativa quanto quantitativamente:
 
 1.  Grad-CAM++ (Gradient-weighted Class Activation Mapping ++):
     *   Visualização de mapas de calor baseados nos gradientes de 1ª, 2ª e 3ª ordem da última camada convolucional.
@@ -136,6 +147,13 @@ Para garantir a transparência do modelo "caixa-preta", foram implementadas duas
    * Utiliza a teoria dos jogos para atribuir a contribuição de cada pixel (ou bloco de pixels) para a probabilidade final de cada classe.
    * Auditoria de Viés: Foi fundamental para identificar o "Shortcut Learning", revelando que o modelo inicialmente focava no osso do crânio. 
    * Validação de Segmentação: Após a implementação do *Skull Stripping* via OpenCV (Contornos + Erosão), o SHAP confirmou que o modelo passou a focar exclusivamente na massa tumoral e tecidos adjacentes.
+  
+### Métricas Quantitativas de XAI
+
+Para avaliar e comparar matematicamente a qualidade das explicações geradas, as seguintes métricas foram calculadas para todos os métodos de XAI em lotes de teste:
+
+* **Índice Gini (Sparsity / Concentração):** Mede o quão concentrado está o mapa de calor da explicação. Valores mais altos indicam que o modelo toma decisões com base em um conjunto focado e compacto de pixels, em vez de ruídos dispersos.
+* **AOPC (Area Over the Perturbation Curve / Fidelidade):** Quantifica a fidelidade da explicação ao processo de decisão do modelo, mascarando progressivamente os pixels mais importantes (em $k$ passos) e medindo a queda resultante na probabilidade da classe correta.
 
 ## Treinamento
 1. O conjunto de dados passou pelo pipeline de segmentação antes de entrar na rede.
@@ -169,5 +187,8 @@ Após o treinamento, o modelo apresentou os seguintes resultados no conjunto de 
 4.  Faça o download ou importe o dataset "[Crystal Clean: Brain Tumors MRI Dataset](https://www.kaggle.com/datasets/mohammadhossein77/brain-tumors-dataset)" do Kaggle.
 5.  Organize o dataset no formato padrão (pastas por classe).
 6.  Execute o notebook (`TLSeg_128_6.ipynb`) de treinamento para gerar o arquivo `.keras`.
-7.  Para gerar as explicações, utilize os scripts de XAI fornecidos (`gc_lime_shap.py`), que carregarão o modelo salvo e aplicarão a segmentação automática nas imagens de teste antes de gerar os mapas de calor (Grad-CAM++), superpixels (LIME) e atribuição de valores de importância por pixels (SHAP).
-8.  O melhor modelo treinado será salvo no caminho configurado para posteriores inferências ou análises.
+7.  O melhor modelo treinado será salvo no caminho configurado para posteriores inferências ou análises.
+8.  The best trained model will be saved in the configured path for further inferences or analysis.
+9.  Geração de Explicações:
+   * Pipeline Quantitativo e Qualitativo Unificado: Execute o notebook/script XAI_QUANTITATIVA (.ipynb ou .py) para calcular automaticamente o Índice Gini e o AOPC enquanto gera as imagens explicativas em lote para Grad-CAM++, LIME e SHAP.
+   * Scripts Individuais: Alternativamente, os scripts qualitativos individuais ou consolidados anteriores ainda podem ser acessados via gc_shap_lime.py (ou scripts isolados de cada método).
